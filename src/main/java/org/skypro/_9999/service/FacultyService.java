@@ -1,6 +1,7 @@
 package org.skypro._9999.service;
 
 import org.skypro._9999.obj.Faculty;
+import org.skypro._9999.obj.Student;
 import org.skypro._9999.repository.FacultyRepository;
 import org.springframework.stereotype.Service;
 
@@ -25,14 +26,26 @@ public class FacultyService {
     }
 
     public Faculty editFaculty(Faculty faculty) {
-      return facultyRepository.save(faculty);
+        return facultyRepository.save(faculty);
     }
 
     public void deleteFaculty(long id) {
         facultyRepository.deleteById(id);
     }
 
-   // public List<Faculty> findByColor(String color) {
-   //    facultyRepository.findAll();
-   // }
+    public Faculty findFaculty(String name, String color) {
+        if (name == null || name.isBlank() ){
+            throw new IllegalArgumentException();
+        }
+        if (color == null || color.isBlank() ){
+            throw new IllegalArgumentException();
+        }
+        return facultyRepository.findByNameContainingIgnoreCaseOrColorContainingIgnoreCase(name, color);
+    }
+
+    public Collection<Student> getStudents(String nameFaculty){
+        return facultyRepository.findAllStudentsByFacultyStudentIgnoreCaseContains(nameFaculty);
+
+    }
+
 }
