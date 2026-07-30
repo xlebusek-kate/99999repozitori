@@ -1,9 +1,8 @@
 package org.skypro._9999.obj;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -15,6 +14,9 @@ public class Faculty {
     private long id;
 
     private String name, color;
+
+    @OneToMany(mappedBy = "facultyStudent" )
+    Collection<Student> studentCollection;
 
     public Faculty() {
     }

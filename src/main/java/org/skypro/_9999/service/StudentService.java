@@ -1,9 +1,11 @@
 package org.skypro._9999.service;
 
+import org.skypro._9999.obj.Faculty;
 import org.skypro._9999.obj.Student;
 import org.skypro._9999.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -32,14 +34,16 @@ public class StudentService {
         studentRepository.deleteById(id);
     }
 
-    /*public Collection<Student> findByAge(int age) {
-        ArrayList<Student> result = new ArrayList();
-        for (Student student : students.values()) {
-            if (student.getAge() == age) {
-                result.add(student);
-            }
-        }
-        return result;
-    }*/
+    public Collection<Student> findByAge(int one , int two) {
+        return studentRepository.findByAgeBetween(one,two);
+    }
+
+    public Faculty getFaculty(long idStudent){
+        return studentRepository.findById(idStudent).orElseThrow(()-> new RuntimeException("Студент не найден")).getFacultyStudent();
+    }
+
+    public Collection<Student> getStudentsOneFaculty(String nameFaculty){
+        return studentRepository.findAllStudentsByFacultyStudentIgnoreCaseContains(nameFaculty);
+    }
 }
 

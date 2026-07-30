@@ -1,5 +1,6 @@
 package org.skypro._9999.controller;
 
+import org.skypro._9999.obj.Faculty;
 import org.skypro._9999.obj.Student;
 import org.skypro._9999.service.StudentService;
 
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.Optional;
 
 @RestController
@@ -16,41 +18,43 @@ import java.util.Optional;
 public class StudentController {
 
     private final StudentService studentService;
-@Autowired
+
+    @Autowired
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<Optional<Student>> getStudentInfo(@PathVariable Long id) {
-        Optional<Student> student = studentService.findStudent(id);
-        if (student.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(student);
+    @GetMapping("/info/{id}")
+    public ResponseEntity<Student> getStudentInfo(@PathVariable Long id) {
+        return ResponseEntity.ok(studentService.findStudent(id).orElseThrow(()-> new RuntimeException("Не найдено")));
     }
 
-    /*@GetMapping
-    public ResponseEntity<Collection<Student>> findStudents(@RequestParam(required = false) int age) {
-        if (age > 0) {
-            return ResponseEntity.ok(studentService.findByAge(age));
-        }
-        return ResponseEntity.ok(Collections.emptyList());
-    }*/
-
-    @PostMapping
-    public ResponseEntity<Student>  createStudent(@RequestBody Student student) {
-        Student savedStudent = studentService.addStudent(student);
-        return ResponseEntity.status(HttpStatus.OK).body(savedStudent);
+    @GetMapping("/faculty/{id}")
+    public ResponseEntity<Faculty> getFaculty(@PathVariable long id) {
+        return ResponseEntity.ok(studentService.getFaculty(id));
     }
 
-    @PutMapping
+    @GetMapping("/findByAge")
+    public ResponseEntity<Collection<Student>> findByAge(@RequestParam int min, @RequestParam int max) {
+        return ResponseEntity.status(HttpStatus.OK).body(studentService.findByAge(min, max));
+    }
+
+    @GetMapping("/by-faculty")
+    public ResponseEntity<Collection<Student>> getStudentsOneFaculty(@RequestParam String nameFaculty){
+        return ResponseEntity.ok(studentService.getStudentsOneFaculty(nameFaculty));
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
+        return ResponseEntity.status(HttpStatus.OK).body(studentService.addStudent(student));
+    }
+
+    @PutMapping("/put")
     public ResponseEntity<Student> editStudent(@RequestBody Student student) {
-        Student foundStudent = studentService.editStudent(student);
-        return ResponseEntity.ok(foundStudent);
+        return ResponseEntity.ok(studentService.editStudent(student));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
         return ResponseEntity.ok().build();

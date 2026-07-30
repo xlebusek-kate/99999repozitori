@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 
+
 @RestController
 @RequestMapping("/faculty")
 public class FacultyController {
@@ -25,7 +26,7 @@ public class FacultyController {
         this.facultyService = facultyService;
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/info/{id}")
     public ResponseEntity<Optional<Faculty>> getFacultyInfo(@PathVariable Long id) {
        Optional<Faculty> faculty = facultyService.findFaculty(id);
         if (facultyService.findFaculty(id).isEmpty()){
@@ -34,12 +35,17 @@ public class FacultyController {
        return ResponseEntity.status(HttpStatus.OK).body(facultyService.findFaculty(id));
     }
 
-    @GetMapping
+    @GetMapping("/faculty")
     public ResponseEntity<Collection<Faculty>> findFaculties(@RequestParam(required = false) String color) {
         if (color != null && !color.isBlank()) {
             return ResponseEntity.status(HttpStatus.OK).build();
         }
         return ResponseEntity.ok(Collections.emptyList());
+    }
+
+    @GetMapping("/faculty-whit-param")
+    public  ResponseEntity<Faculty> findFaculty(@RequestParam String name, @RequestParam String color){
+        return ResponseEntity.status(HttpStatus.OK).body(facultyService.findFaculty(name,color));
     }
 
     @PostMapping
@@ -56,7 +62,7 @@ public class FacultyController {
         return ResponseEntity.ok(foundFaculty);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteFaculty(@PathVariable Long id) {
         facultyService.deleteFaculty(id);
         return ResponseEntity.ok().build();
